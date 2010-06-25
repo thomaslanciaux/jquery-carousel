@@ -1,4 +1,4 @@
-/* jQuery Carousel 0.9
+/* jQuery Carousel 0.9.5
    Copyright 2008-2009 Thomas Lanciaux and Pierre Bertet.
    This software is licensed under the CC-GNU LGPL <http://creativecommons.org/licenses/LGPL/2.1/>
 */
@@ -12,8 +12,8 @@
 			dispItems: 1,
 			pagination: false,
 			paginationPosition: "inside",
-			nextBtn: '<span role="button">Next</span>',
-			prevBtn: '<span role="button">Previous</span>',
+			nextBtn: '<a role="button">Next</a>',
+			prevBtn: '<a role="button">Previous</a>',
 			btnsPosition: "inside",
 			nextBtnInsert: "appendTo",
 			prevBtnInsert: "prependTo",
@@ -27,9 +27,12 @@
 			slideEasing: "swing",
 			animSpeed: "normal",
 			equalWidths: "true",
-			callback: function(){},
+			verticalMargin: 0,
+			callback: function () {}, 
 			useAddress: false,
-			adressIdentifier: "carousel"
+			adressIdentifier: "carousel",
+			tabLabel: function (tabNum) { return tabNum; },
+			showEmptyItems: true
 		}, params);
 		
 		// Buttons position
@@ -102,6 +105,22 @@
 			// On document load...
 			$(function(){
 				
+				//Set max Height with the highest element
+				var $items = env.$elts.content.children();
+				var $maxHeight = 0;
+				
+				$items.each(function () {
+					$item = $(this);
+					$itemHeight = $item.outerHeight();
+					if ($itemHeight > $maxHeight) {
+						$maxHeight = $itemHeight;
+					}
+				});
+				if (env.params.verticalMargin > 0) {
+					$maxHeight = $maxHeight + env.params.verticalMargin;
+				}
+				
+				$items.height($maxHeight);
 				// First item
 				var $firstItem = env.$elts.content.children(":first");
 				
@@ -131,18 +150,23 @@
 				}
 				
 				// Width 3/3 : Set content width to container
-				env.$elts.content.width( env.contentWidth );
+				env.$elts.content.width(env.contentWidth);
 				
 				// Height 1/2 : Get default item height
-				env.itemHeight = $firstItem.outerHeight();
+				env.itemHeight = $maxHeight;
 				
 				// Height 2/2 : Set content height to container
-				if (params.direction == "vertical"){
-					env.$elts.content.css({height:env.itemHeight * env.steps.count + "px"});
-					env.$elts.content.parent().css({height:env.itemHeight * env.params.dispItems + "px"});
-					
+				if (params.direction == "vertical") {
+					env.$elts.content.css({
+						height: env.itemHeight * env.steps.count + "px"
+					});
+					env.$elts.content.parent().css({
+						height: env.itemHeight * env.params.dispItems + "px"
+					});
 				} else {
-					env.$elts.content.parent().css({height:env.itemHeight + "px"});
+					env.$elts.content.parent().css({
+						height: env.itemHeight + "px"
+					});
 				}
 				
 				// Update Next / Prev buttons state
@@ -210,29 +234,23 @@
 	};
 	
 	// Pagination
-	function initPagination(env){
-		env.$elts.pagination = $('<div class="center-wrap"><div class="carousel-pagination"><p></p></div></div>')[((env.params.paginationPosition == "outside")? "insertAfter" : "appendTo")](env.$elts.carousel).find("p");
-		
-		env.$elts.paginationBtns = $([]);
-		
-		env.$elts.content.find("li").each(function(i){
-			if (i % env.params.dispItems == 0) {
-				env.$elts.paginationBtns = env.$elts.paginationBtns.add( $('<a role="button"><span>'+( env.$elts.paginationBtns.length + 1 )+'</span></a>').data("firstStep", i) );
-			}
-		});
-		
-		env.$elts.paginationBtns.appendTo(env.$elts.pagination);
-		
-		env.$elts.paginationBtns.slice(0,1).addClass("active");
-		
-		// Events
-		env.launchOnLoad.push(function(){
-			env.$elts.paginationBtns.click(function(e){
-				goToStep( env, $(this).data("firstStep") );
-				stopAutoSlide(env);
+	function initPagination(env) {
+			env.$elts.pagination = $('<div class="center-wrap"><div class="carousel-pagination"><p></p></div></div>')[((env.params.paginationPosition == "outside") ? "insertAfter" : "appendTo")](env.$elts.carousel).find("p");
+			env.$elts.paginationBtns = $([]);
+			env.$elts.content.find("li").each(function (i) {
+				if (i % env.params.dispItems == 0) {
+					env.$elts.paginationBtns = env.$elts.paginationBtns.add($('<a role="button"><span>' + env.params.tabLabel(env.$elts.paginationBtns.length + 1) + '</span></a>').data("firstStep", i));
+				}
 			});
-		});
-	};
+			env.$elts.paginationBtns.each(function () { $(this).appendTo(env.$elts.pagination); });
+			env.$elts.paginationBtns.slice(0, 1).addClass("active");
+			env.launchOnLoad.push(function () {
+				env.$elts.paginationBtns.click(function (e) {
+					goToStep(env, $(this).data("firstStep"));
+					stopAutoSlide(env);
+				});
+			});
+    };
 	
 	// Address plugin
 	function initAddress(env) {
@@ -283,20 +301,28 @@
 	// Get next/prev step, useful for autoSlide
 	function getRelativeStep(env, position) {
 		if (position == "prev") {
-			if ( (env.steps.first - env.params.dispItems) >= 0 ) {
-				return env.steps.first - env.params.dispItems;
-				
+			if (!env.params.showEmptyItems) {
+				if (env.steps.first == 0) {
+					return ((env.params.loop) ? (env.steps.count - env.params.dispItems) : false);
+				} else {
+					return Math.max(0, env.steps.first - env.params.dispItems);
+				}
 			} else {
-				return ( (env.params.loop)? (env.steps.count - env.params.dispItems) : false );
+				if ((env.steps.first - env.params.dispItems) >= 0) {
+					return env.steps.first - env.params.dispItems;
+				} else {
+					return ((env.params.loop) ? (env.steps.count - env.params.dispItems) : false);
+				}
 			}
-			
 		} else if (position == "next") {
-			
-			if ( (env.steps.first + env.params.dispItems) < env.steps.count ) {
-				return env.steps.first + env.params.dispItems;
-				
+			if ((env.steps.first + env.params.dispItems) < env.steps.count) {
+				if (!env.params.showEmptyItems) {
+					return Math.min(env.steps.first + env.params.dispItems, env.steps.count - env.params.dispItems);
+				} else {
+					return env.steps.first + env.params.dispItems;
+				}
 			} else {
-				return ( (env.params.loop)? 0 : false );
+				return ((env.params.loop) ? 0 : false);
 			}
 		}
 	};
