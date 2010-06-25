@@ -1,0 +1,448 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title>jQuery Carousel</title>
+	<link rel="stylesheet" href="assets/doc.css" type="text/css" media="screen" />
+	<style type="text/css" media="screen">
+		#container h2, #container h3, #container pre{clear:both;}
+		#container h3{padding-top:30px;}
+		#container .carousel,
+		#container .carousel .carousel-wrap{margin:0 0 15px;border:0;}
+		#container .carousel.js .carousel-wrap{width:200px;float:left;margin:0 15px 15px;border:1px solid #d3d3d3;background:#f4f4f4;}
+		#container .example-4.js .carousel-wrap{width:600px;}
+		#container .carousel ul{margin:0;padding:0;}
+		#container .carousel.js ul li{display:inline;float:left;padding:20px 0;width:200px;text-align:center;}
+		#container .carousel .carousel-control{display:inline;float:left;margin:15px 0 0;padding:5px 10px;font-weight:bold;font-size:11px;cursor:pointer;background:#ddd;}
+		#container .example-6 .carousel-control{background:none;padding:0;margin:10px 0 0;}
+		#container .carousel .disabled{color:#ddd;cursor:default;background:#f4f4f4;}
+		#container .example-6 .disabled{-moz-opacity:.3;opacity:0.3;filter:alpha(opacity=30);}
+		#container .carousel div{margin:0;padding:0;border:0;}
+		#container div.center-wrap{clear:both;border:0;}
+		#container div.center-wrap div{border:0;}
+		#container div.center-wrap a{margin:0 2px;padding:0 5px;border:1px solid #d3d3d3;background:#f4f4f4;cursor:pointer;}
+		#container div.center-wrap a.active{background:#ddd;}
+	</style>
+	<script type="text/javascript" src="../vendor/jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="../vendor/jquery.address-1.0.js"></script>
+	<script type="text/javascript" src="../vendor/jquery.easing.js"></script>
+	<script type="text/javascript" src="../src/jquery.carousel.js"></script>
+	<script type="text/javascript">/*<![CDATA[*/
+		(function($){
+			$(function(){
+				$("div.example-1").carousel();
+				$("div.example-2").carousel({ direction: "vertical" });
+				$("div.example-3").carousel({ loop: true });
+				$("div.example-4").carousel({ dispItems: 3 });
+				$("div.example-5").carousel({ pagination: true});
+				$("div.example-6").carousel({
+					nextBtn: '<img src="assets/i/next.png" alt="next" width="34" height="33" />',
+					prevBtn: '<img src="assets/i/prev.png" alt="next" width="34" height="33" />'
+				});
+				$("div.example-7").carousel({ autoSlide: true, loop: true});
+				$("div.example-8").carousel({ autoSlide: true, loop: true, autoSlideInterval: 5000});
+				$("div.example-9").carousel({ autoSlide: true, loop: true, autoSlideInterval: 5000, delayAutoSlide: 2000});
+				$("div.example-10").carousel({ effect: "fade" });
+				$("div.example-11").carousel({ slideEasing: "easeOutBounce" });
+				$("div.example-12").carousel({ animSpeed: "slow" });
+				$("div.example-13").carousel({ useAddress: true });
+			});
+		})(jQuery);
+	/*]]>*/</script>
+</head>
+<body>
+	<div id="container">
+		<h1>jQuery Carousel</h1>
+			<h2>Démonstration</h2>
+			
+			<div class="carousel example-1">
+				<ul>
+					<li>item 1</li>
+					<li>item 2</li>
+					<li>item 3</li>
+					<li>item 4</li>
+					<li>item 5</li>
+					<li>item 6</li>
+				</ul>
+			</div>
+			
+			<h2>Fonctionnement</h2>
+			
+			<p>
+				Le carrousel est conçu pour être totalement accessible lorsque Javascript est désactivé.<br />
+				Voici un exemple de structure HTML sur laquelle pourra se baser le script :
+			</p>
+			
+			<pre>&lt;div id="my-carousel"&gt;
+	&lt;ul&gt;
+		&lt;li&gt;item 1&lt;/li&gt;
+		&lt;li&gt;item 2&lt;/li&gt;
+		&lt;li&gt;item 3&lt;/li&gt;
+		&lt;li&gt;item 4&lt;/li&gt;
+		&lt;li&gt;item 5&lt;/li&gt;
+		&lt;li&gt;item 6&lt;/li&gt;
+	&lt;/ul&gt;
+&lt;/div&gt;</pre>
+			
+			<p>Et le script permettant de l'initialiser :</p>
+			<pre>&lt;script type="text/javascript"&gt;$("#my-carousel").carousel();&lt;/script&gt;</pre>
+			
+			
+			
+			<p>
+				Il est ainsi possible de définir un carrousel sur une simple liste.<br />
+				Cela peut etre appliqué sur différentes structures. Le seul prérequis est d'avoir deux conteneurs à l'intérieur desquels sera contenue une suite d'éléments enfants.<br />
+				<em>(Dans l'exemple ci-dessus, l'élément <code>&lt;ul&gt;</code> peut etre remplacé par un élément <code>&lt;div&gt;</code> et les éléments <code>&lt;li&gt;</code> par des éléments <code>&lt;p&gt;</code>, etc.)</em>
+			</p>
+			
+			<h2>Utilisation</h2>
+			<p>Il est possible de passer des options à la méthode jquery.carousel, sous la forme d'un tableau associatif. Ces paramètres sont détaillés à la suite.</p>
+			
+			
+			
+			<h3>direction</h3>
+			<p>Type attendu : <code>string</code></p>
+			<p>Valeur par défaut : <code>"horizontal"</code></p>
+			<p>Valeurs possibles : <code>"horizontal"</code>, <code>"vertical"</code></p>
+			<p>Le paramètre <code>direction</code> permet de définir la direction du carrousel (horizontal ou vertical).</p>
+			<p>Exemple :</p>
+			<pre>// Carrousel vertical
+$("div").carousel( { direction: "vertical" } );</pre>
+			<p>Démonstration:</p>
+			<div class="carousel example-2">
+				<ul>
+					<li>item 1</li>
+					<li>item 2</li>
+					<li>item 3</li>
+					<li>item 4</li>
+					<li>item 5</li>
+					<li>item 6</li>
+				</ul>
+			</div>
+			
+			
+			
+			<h3>loop</h3>
+			<p>Type attendu : <code>boolean</code></p>
+			<p>Valeur par défaut : <code>false</code></p>
+			<p>Le paramètre <code>loop</code> permet de configurer le carrousel pour qu'il tourne en boucle, si défini sur <code>true</code>.</p>
+			<p>Exemple :</p>
+			<pre>// Carrousel en boucle
+$("div").carousel( { loop: true } );</pre>
+			<p>Démonstration:</p>
+			<div class="carousel example-3">
+				<ul>
+					<li>item 1</li>
+					<li>item 2</li>
+					<li>item 3</li>
+					<li>item 4</li>
+					<li>item 5</li>
+					<li>item 6</li>
+				</ul>
+			</div>
+			
+			
+			
+			<h3>dispItems</h3>
+			<p>Type attendu : <code>number</code></p>
+			<p>Valeur par défaut : <code>1</code></p>
+			<p>Le paramètre <code>dispItems</code> permet de définir le nombre d'éléments qu'on veut afficher par écran.</p>
+			<p>Exemple :</p>
+			<pre>// Carrousel par écran / pas de 3
+$("div").carousel( { dispItems: 3 } );</pre>
+			<p>Démonstration:</p>
+			<div class="carousel example-4">
+				<ul>
+					<li>item 1</li>
+					<li>item 2</li>
+					<li>item 3</li>
+					<li>item 4</li>
+					<li>item 5</li>
+					<li>item 6</li>
+				</ul>
+			</div>
+			
+			
+			
+			<h3>pagination</h3>
+			<p>Type attendu : <code>boolean</code></p>
+			<p>Valeur par défaut : <code>false</code></p>
+			<p>Le paramètre <code>pagination</code> permet d'afficher une pagination du carrousel, si défini sur <code>true</code>.</p>
+			<p>Exemple :</p>
+			<pre>// Carrousel avec pagination
+$("div").carousel( { pagination: true } );</pre>
+			<p>Démonstration:</p>
+			<div class="carousel example-5">
+				<ul>
+					<li>item 1</li>
+					<li>item 2</li>
+					<li>item 3</li>
+					<li>item 4</li>
+					<li>item 5</li>
+					<li>item 6</li>
+				</ul>
+			</div>
+			
+			
+			
+			<h3>paginationPosition</h3>
+			<p>Type attendu : <code>string</code></p>
+			<p>Valeur par défaut : <code>"inside"</code></p>
+			<p>Valeurs possibles : <code>"inside"</code>, <code>"outside"</code></p>
+			<p>Dépend de : <code>pagination</code> défini à <code>true</code></p>
+			<p>Le paramètre <code>paginationPosition</code> permet de définir la position de la pagination par rapport au conteneur global du carrousel.</p>
+			<p>Exemple :</p>
+			<pre>// Carrousel avec pagination
+$("div").carousel( {
+	pagination: true,
+	paginationPosition: "outside"
+} );</pre>
+			
+			
+			
+			<h3>nextBtn / prevBtn</h3>
+			<p>Type attendu : <code>string</code></p>
+			<p>Valeurs par défaut : <code>"&lt;span role="button"&gt;Next&lt;/span&gt;"</code> et <code>"&lt;span role="button"&gt;Previous&lt;/span&gt;"</code></p>
+			<p>Les paramètres <code>nextBtn</code> et <code>prevBtn</code> permettent de définir le code HTML des bouton "Next" et "Previous", respectivement.</p>
+			<p>Exemple :</p>
+			<pre>// Carrousel avec des images pour les boutons de contrôle
+$("div").carousel( { 
+	nextBtn: '&lt;img src="images/buttons/next.png" alt="next" width="34" height="33" /&gt;',
+	prevBtn: '&lt;img src="images/buttons/prev.png" alt="prev" width="34" height="33" /&gt;'
+} );</pre>
+			<p>Démonstration:</p>
+			<div class="carousel example-6">
+				<ul>
+					<li>item 1</li>
+					<li>item 2</li>
+					<li>item 3</li>
+					<li>item 4</li>
+					<li>item 5</li>
+					<li>item 6</li>
+				</ul>
+			</div>
+			
+			
+			
+			<h3>btnsPosition</h3>
+			<p>Type attendu : <code>string</code></p>
+			<p>Valeur par défaut : <code>"inside"</code></p>
+			<p>Valeurs possibles : <code>"inside"</code>, <code>"outside"</code></p>
+			<p>Le paramètre <code>btnsPosition</code> permet de définir la position des boutons par rapport au conteneur global du carrousel.</p>
+			<p>Exemple :</p>
+			<pre>$("div").carousel( { btnsPosition: "outside" } );</pre>
+			
+			
+			
+			<h3>nextBtnInsertFn / prevBtnInsertFn</h3>
+			<p>Type attendu : <code>function</code></p>
+			<p>Valeurs par défaut : <code>false</code></p>
+			<p>
+				Les paramètres <code>nextBtnInsertFn</code> et <code>prevBtnInsertFn</code> permettent d'insérer les boutons "Next" et "Previous" de manière entièrement libre.<br />
+				Un paramètre peut éventuellement être défini pour la fonction. Ce paramètre sera un objet contenant tous les éléments utilisés par le script.<br />
+				La fonction doit retourner l'élément associé.<br />
+				<strong>Ces paramètres ont la priorité sur les paramètres <code>nextBtn</code>, <code>prevBtn</code> et <code>btnsPosition</code>.</strong>
+			</p>
+			<p>Exemple :</p>
+			<pre>
+$("div").carousel( {
+	nextBtnInsertFn: function(elts) {
+		return $('&lt;button&gt;Next&lt;/button&gt;').prependTo("body");
+	},
+	prevBtnInsertFn: function(elts) {
+		return $('&lt;button&gt;Prev&lt;/button&gt;').prependTo("body");
+	}
+} );</pre>
+			
+			
+			
+			<h3>autoSlide</h3>
+			<p>Type attendu : <code>boolean</code></p>
+			<p>Valeur par défaut : <code>false</code></p>
+			<p>Le paramètre <code>autoSlide</code> permet de faire défiler autoamtiquement le carrousel à intervalle régulière, si défini sur <code>true</code>.</p>
+			<p>Exemple :</p>
+			<pre>// Clic automatique sur le bouton "Next" (défilement automatique)
+$("div").carousel( { autoSlide: true } );</pre>
+			<p>Démonstration:</p>
+			<div class="carousel example-7">
+				<ul>
+					<li>item 1</li>
+					<li>item 2</li>
+					<li>item 3</li>
+					<li>item 4</li>
+					<li>item 5</li>
+					<li>item 6</li>
+				</ul>
+			</div>
+			
+			
+			
+			<h3>autoSlideInterval</h3>
+			<p>Type attendu : <code>number</code></p>
+			<p>Valeur par défaut : <code>3000</code></p>
+			<p>Dépend de : <code>autoSlide</code> défini à <code>true</code></p>
+			<p>Le paramètre <code>autoSlideInterval</code> permet de définir le délai (en millisecondes) entre chaque défilement, lorsque l'option <code>autoSlide</code> est définie à <code>true</code>.</p>
+			<p>Exemple :</p>
+			<pre>// Clic automatique sur le bouton "Next" toutes les 5 secondes (défilement automatique)
+$("div").carousel( { 
+	autoSlide: true, 
+	autoSlideInterval: 5000
+} );</pre>
+			<p>Démonstration:</p>
+			<div class="carousel example-8">
+				<ul>
+					<li>item 1</li>
+					<li>item 2</li>
+					<li>item 3</li>
+					<li>item 4</li>
+					<li>item 5</li>
+					<li>item 6</li>
+				</ul>
+			</div>
+			
+			
+			
+			<h3>delayAutoSlide</h3>
+			<p>Type attendu : <code>number</code></p>
+			<p>Valeur par défaut : <code>false</code> (égal à autoSlideInterval)</p>
+			<p>Dépend de : <code>autoSlide</code> défini à <code>true</code></p>
+			<p>
+				Le paramètre <code>delayAutoSlide</code> permet de retarder le premier défilement, lorsque l'option <code>autoSlide</code> est définie à <code>true</code>.<br />
+				Si aucune valeur n'est définie, sa valeur sera la même que celle définie pour l'option <code>autoSlideInterval</code>.
+			</p>
+			<p>Exemple :</p>
+			<pre>// Click automatique sur le bouton next toutes les 5sec, avec un décalage de 2sec à chaque click
+$("div").carousel( { 
+	autoSlide: true, 
+	autoSlideInterval: 5000,
+	delayAutoSlide: 2000
+} );</pre>
+			<p>Démonstration:</p>
+			<div class="carousel example-9">
+				<ul>
+					<li>item 1</li>
+					<li>item 2</li>
+					<li>item 3</li>
+					<li>item 4</li>
+					<li>item 5</li>
+					<li>item 6</li>
+				</ul>
+			</div>
+			
+			
+			
+			<h3>combinedClasses</h3>
+			<p>Type attendu : <code>boolean</code></p>
+			<p>Valeur par défaut : <code>false</code></p>
+			<p>
+				Le paramètre <code>combinedClasses</code> permet d'emuler les sélecteurs de classes multiples pour Internet Explorer 6, si défini sur <code>true</code>.<br />
+				Lorsque les classes "next" et "disabled" ou "previous" et "disabled" seront présentes, les classes "next-disabled" et "previous-disabled" seront également ajoutées.
+			</p>
+			<p>Exemple :</p>
+			<pre>$("div").carousel( { combinedClasses: true } );</pre>
+			
+			
+			
+			<h3>effect</h3>
+			<p>Type attendu : <code>string</code></p>
+			<p>Valeur par défaut : <code>"slide"</code></p>
+			<p>Valeurs possibles : <code>"no"</code>, <code>"slide"</code>, <code>"fade"</code></p>
+			<p>Le paramètre <code>effect</code> permet de définir l'effet qui sera être utilisé lors du défilement.</p>
+			<p>Exemple :</p>
+			<pre>// Carrousel en fade
+$("div").carousel( { effect: "fade" } );</pre>
+			<p>Démonstration:</p>
+			<div class="carousel example-10">
+				<ul>
+					<li>item 1</li>
+					<li>item 2</li>
+					<li>item 3</li>
+					<li>item 4</li>
+					<li>item 5</li>
+					<li>item 6</li>
+				</ul>
+			</div>
+			
+			
+			
+			<h3>slideEasing</h3>
+			<p>Type attendu : <code>string</code></p>
+			<p>Valeur par défaut : <code>"swing"</code></p>
+			<p>Valeurs possibles : <code>"swing"</code>, <code>"linear"</code>, valeurs apportées par <a href="http://gsgd.co.uk/sandbox/jquery/easing/">jQuery Easing Plugin</a> si présent.</p>
+			<p>
+				Le paramètre <code>slideEasing</code> permet de définir le type de transition (easing) qui sera utilisé sur l'animation du carrousel.<br />
+				Par défaut, jQuery propose les valeurs swing (ralentissement sur la fin de l'animation) et linear (animation linéaire).<br />
+				Si le plugin <a href="http://gsgd.co.uk/sandbox/jquery/easing/">jQuery Easing Plugin</a> est présent, beaucoup d'autres valeurs sont possibles.
+			</p>
+			<p>Exemple :</p>
+			<pre>// Carrousel en slide avec un effet easing de type bounce
+$("div").carousel( { slideEasing: "easeOutBounce" } );</pre>
+			<p>Démonstration:</p>
+			<div class="carousel example-11">
+				<ul>
+					<li>item 1</li>
+					<li>item 2</li>
+					<li>item 3</li>
+					<li>item 4</li>
+					<li>item 5</li>
+					<li>item 6</li>
+				</ul>
+			</div>
+			
+			
+			
+			<h3>animSpeed</h3>
+			<p>Types attendu : <code>"string"</code>, <code>number</code></p>
+			<p>Valeur par défaut : <code>"normal"</code></p>
+			<p>Valeurs possibles : <code>"slow"</code>, <code>"normal"</code>, <code>"fast"</code>, temps en millisecondes (<code>number</code>)</p>
+			<p>Le paramètre <code>animSpeed</code> permet de définir le temps de l'animation.</p>
+			<p>Exemple :</p>
+			<pre>// Carrousel avec une animation plus lente
+$("div").carousel( { animSpeed: "slow" } );</pre>
+			<p>Démonstration:</p>
+			<div class="carousel example-12">
+				<ul>
+					<li>item 1</li>
+					<li>item 2</li>
+					<li>item 3</li>
+					<li>item 4</li>
+					<li>item 5</li>
+					<li>item 6</li>
+				</ul>
+			</div>
+			
+			
+			
+			<h3>useAddress</h3>
+			<p>Type attendu : <code>boolean</code></p>
+			<p>Valeur par défaut : <code>false</code></p>
+			<p>Le paramètre <code>useAddress</code> permet d'utiliser le plugin jQuery Address. Ce plugin permet d'utiliser les ancres dans la barre d'adresse pour utiliser les fonctionnalités natives du navigateur (suivant / précédent, favoris, partage de lien).</p>
+			<p>Exemple :</p>
+			<pre>// Utilisation d'une ancre dans la barre d'adresse
+$("div").carousel( { useAddress: true } );</pre>
+			<p>Démonstration:</p>
+			<div class="carousel example-13">
+				<ul>
+					<li>item 1</li>
+					<li>item 2</li>
+					<li>item 3</li>
+					<li>item 4</li>
+					<li>item 5</li>
+					<li>item 6</li>
+				</ul>
+			</div>
+			
+			
+			
+			<h3>adressIdentifier</h3>
+			<p>Type attendu : <code>string</code></p>
+			<p>Valeur par défaut : <code>"carousel"</code></p>
+			<p>Dépend de : <code>useAddress</code> défini à <code>true</code></p>
+			<p>Le paramètre <code>adressIdentifier</code> permet de modifier l'identifiant utilisé par jQuery Address. Cet identifiant apparaîtra dans la barre d'adresse du navigateur.</p>
+			<p>Exemple :</p>
+			<pre>// Modification de l'identifiant de l'ancre dans la barre d'adresse
+$("div").carousel( { useAddress: true } );</pre>
+	</div>
+</body>
+</html>
