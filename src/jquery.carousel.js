@@ -297,7 +297,7 @@ This software is licensed under the CC-GNU LGPL <http://creativecommons.org/lice
 			env.$elts.pagination = $('<div class="center-wrap"><div class="carousel-pagination"><p></p></div></div>')[((env.params.paginationPosition == "outside") ? "insertAfter" : "appendTo")](env.$elts.carousel).find("p");
 			env.$elts.paginationBtns = $([]);
 
-			env.$elts.content.find("li").each(function (i) {
+			env.$elts.content.children().each(function (i) {
 				if (i % env.params.dispItems == 0) {
 					addPage(env, i);
 				}
