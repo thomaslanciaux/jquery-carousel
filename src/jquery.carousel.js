@@ -1,4 +1,4 @@
-/* jQuery Carousel 0.9.8
+/* jQuery Carousel 0.9.
 Copyright 2010 Thomas Lanciaux and Pierre Bertet.
 This software is licensed under the CC-GNU LGPL <http://creativecommons.org/licenses/LGPL/2.1/>
 */
@@ -28,7 +28,8 @@ This software is licensed under the CC-GNU LGPL <http://creativecommons.org/lice
 			animSpeed: 300,
 			equalWidths: "true",
 			verticalMargin: 0,
-			callback: function () {}, 
+			callback: function () {},
+            completeAnimate: function() {},
 			useAddress: false,
 			adressIdentifier: "carousel",
 			tabLabel: function (tabNum) { return tabNum; },
@@ -422,14 +423,19 @@ This software is licensed under the CC-GNU LGPL <http://creativecommons.org/lice
 			
 			// Slide effect
 			default:
+                
+                function CallBackAnimate() {
+                    env.params.completeAnimate(step);
+                }
+
 				if (env.params.direction == "vertical"){
 					env.$elts.content.stop().animate({
 						top : -(env.itemHeight * step) + "px"
-					}, env.params.animSpeed, env.params.slideEasing);
+					}, env.params.animSpeed, env.params.slideEasing, CallBackAnimate);
 				} else {
 					env.$elts.content.stop().animate({
 						left : -(env.itemWidth * step) + "px"
-					}, env.params.animSpeed, env.params.slideEasing);
+					}, env.params.animSpeed, env.params.slideEasing, CallBackAnimate);
 				}
 				break;
 		}
